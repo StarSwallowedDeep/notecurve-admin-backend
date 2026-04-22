@@ -22,29 +22,23 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    // 토큰 추출 메서드
+    // 토큰 추출 (sync 전용으로만 사용)
     private String getExtractToken() {
         Object credentials = SecurityContextHolder.getContext().getAuthentication().getCredentials();
         String token = (credentials != null) ? credentials.toString() : null;
-
-        if (token == null || token.isEmpty()) {
-            return null;
-        }
-
+        if (token == null || token.isEmpty()) return null;
         String pureToken = token.replace("Bearer ", "");
-        return "token=" + pureToken; 
+        return "token=" + pureToken;
     }
 
-    // 데이터 전체 동기화
+    // 데이터 전체 동기화 (Feign GET 유지)
     @PostMapping("/sync")
     public ResponseEntity<String> sync() {
         String token = getExtractToken();
         if (token == null) {
             return ResponseEntity.status(401).body("인증 토큰이 없습니다.");
         }
-
-        adminService.syncWithMainServer(token); 
-        
+        adminService.syncWithMainServer(token);
         return ResponseEntity.ok("모든 데이터 동기화가 성공적으로 완료되었습니다!");
     }
 
@@ -56,15 +50,13 @@ public class AdminController {
 
     @PatchMapping("/users/{id}/role")
     public ResponseEntity<String> updateUserRole(@PathVariable Long id, @RequestParam String role) {
-        String token = getExtractToken();
-        adminService.updateUserRole(token, id, role); // ← 수정
+        adminService.updateUserRole(id, role);
         return ResponseEntity.ok("유저 권한이 변경되었습니다.");
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        String token = getExtractToken();
-        adminService.deleteUser(token, id);
+        adminService.deleteUser(id);
         return ResponseEntity.ok("유저가 삭제되었습니다.");
     }
 
@@ -76,8 +68,7 @@ public class AdminController {
 
     @DeleteMapping("/posts/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
-        String token = getExtractToken();
-        adminService.deletePost(token, id); // ← 수정
+        adminService.deletePost(id);
         return ResponseEntity.ok("게시글이 삭제되었습니다.");
     }
 
@@ -89,8 +80,7 @@ public class AdminController {
 
     @DeleteMapping("/message-boards/{id}")
     public ResponseEntity<String> deleteMessageBoard(@PathVariable Long id) {
-        String token = getExtractToken();
-        adminService.deleteMessageBoard(token, id); // ← 수정
+        adminService.deleteMessageBoard(id);
         return ResponseEntity.ok("메시지 보드와 관련 댓글이 삭제되었습니다.");
     }
 
@@ -102,8 +92,7 @@ public class AdminController {
 
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<String> deleteComment(@PathVariable Long id) {
-        String token = getExtractToken();
-        adminService.deleteComment(token, id); // ← 수정
+        adminService.deleteComment(id);
         return ResponseEntity.ok("댓글이 삭제되었습니다.");
     }
 
