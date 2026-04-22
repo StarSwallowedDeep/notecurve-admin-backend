@@ -18,4 +18,11 @@ public interface AdminCommentRepository extends JpaRepository<AdminComment, Long
     @Modifying
     @Transactional
     void deleteByMessageBoardId(Long messageBoardId);
+
+    // 유저 삭제 시 사용
+    @Modifying
+    @Transactional
+    void deleteByUserId(Long userId);
+
+    long countByUserId(Long userId);
 }
