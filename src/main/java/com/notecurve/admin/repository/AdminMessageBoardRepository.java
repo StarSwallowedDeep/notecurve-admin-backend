@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -13,4 +14,11 @@ public interface AdminMessageBoardRepository extends JpaRepository<AdminMessageB
     @Modifying
     @Query("UPDATE AdminMessageBoard b SET b.userName = :newName WHERE b.userId = :userId")
     void updateUserNameByUserId(@Param("userId") Long userId, @Param("newName") String newName);
+
+    // 유저 삭제 시 사용
+    @Modifying
+    @Transactional
+    void deleteByUserId(Long userId);
+
+    long countByUserId(Long userId);
 }
